@@ -210,7 +210,7 @@ MAKE_HRM(hmr, &kp, &kp, KEYS_L THUMBS) // Right-hand HRMs.
 &kp TAB        &kp Q        &kp W        &kp E         &kp R         &kp T                                                                   &kp Y   &kp U   &kp I         &kp O         &kp P     &kp PLUS
 &none          &hml LGUI A  &hml LALT S  &hml LSHFT D  &hml LCTRL F  &kp G                                                                   &kp H   &hmr LCTRL J  &hmr LSHFT K  &kp L   &hmr LGUI SEMI  &kp SQT
 &kp LSHFT      &kp Z        &kp X        &kp C         &kp V         &kp B   &sk RGUI       &kp LCTRL    &kp LALT         &magic MAGIC 0  &kp RCTRL    &kp RSHFT     &kp N   &kp M   &kp COMMA     &kp DOT       &kp FSLH  &kp PG_UP
-&kp LCTRL      &kp HOME     &kp END      &kp LEFT      &sk RGUI              &lt SYM SPACE  &lt NAV ESC  &lt MOUSE LGUI   &kp LG(GRAVE)   &lt NUM RET  &lt NAV BSPC          &kp UP  &kp DOWN      &kp LBKT      &kp RBKT  &sk RGUI
+&sk RGUI       &kp HOME     &kp END      &kp LEFT      &none                 &lt SYM SPACE  &lt NAV ESC  &lt MOUSE LGUI   &kp LG(GRAVE)   &lt NUM RET  &lt NAV BSPC          &kp UP  &kp DOWN      &kp LBKT      &kp RBKT  &sk RGUI
             >;
         };
 
@@ -219,7 +219,7 @@ MAKE_HRM(hmr, &kp, &kp, KEYS_L THUMBS) // Right-hand HRMs.
 ___  ___  ___  ___  ___                                                                                                    ___  ___  ___  ___  ___
 ___  ___  ___            ___           ___            ___                                                                                   ___          ___             ___            ___            ___  ___
 ___  ___  &kp LG(LBKT)   &kp LG(RBKT)  &kp LG(LBRC)   &kp LG(RBRC)                                                                          &caps_word   &kp LA(LEFT)    &kp LA(RIGHT)  XXX            XXX  ___
-___  ___  &kp C_VOL_DN   &kp K_MUTE    &kp C_VOL_UP   ___                                                                                   &kp N0       &none    &none  &kp LS(LG(J))  XXX  ___
+___  ___  &kp C_VOL_DN   &kp K_MUTE    &kp C_VOL_UP   ___                                                                                   &kp N0       &kp TAB    &kp LS(TAB)  &kp LS(LG(J))  XXX  ___
 ___  ___  ___            &kp C_PP      &kp LG(LEFT)   &kp LG(RIGHT)  ___          ___  ___     ___  ___  ___                                &kp CAPS     &kp LG(LS(N4))  XXX            XXX            ___  ___
 ___  ___  ___            ___           ___                           &kp LS(RET)  ___  ___     ___  ___  ___                                             ___             ___            ___            ___  ___
             >;
