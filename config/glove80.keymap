@@ -1,0 +1,274 @@
+/*
+ * Glove80 port of the Charybdis (4x6) layout in ~/p/zmk-charybdis.
+ *
+ * Builds against MoErgo's ZMK fork (moergo-sc/zmk) via nix, see build.sh.
+ *
+ * Key positions (Glove80):
+ *
+ *   ╭──────────────────────╮                        ╭──────────────────────╮
+ *   │  0   1   2   3   4   │                        │   5   6   7   8   9  │  F-row
+ *   │ 10  11  12  13  14  15 │                    │ 16  17  18  19  20  21 │  numbers
+ *   │ 22  23  24  25  26  27 │                    │ 28  29  30  31  32  33 │  top
+ *   │ 34  35  36  37  38  39 │                    │ 40  41  42  43  44  45 │  home
+ *   │ 46  47  48  49  50  51 │ 52 53 54  55 56 57 │ 58  59  60  61  62  63 │  bottom   + thumbs T1 T2 T3
+ *   │ 64  65  66  67  68     │ 69 70 71  72 73 74 │     75  76  77  78  79 │  lowest   + thumbs T4 T5 T6
+ *   ╰──────────────────────╯                        ╰──────────────────────╯
+ *
+ * Thumb clusters: T1-T3 are the upper (outer) arc, T4-T6 the lower arc next to
+ * the palm. T4 is the resting thumb key on both hands.
+ */
+
+#define ZMK_POINTING_DEFAULT_SCRL_VAL 15    // default: 10
+
+#include <behaviors.dtsi>
+#include <dt-bindings/zmk/keys.h>
+#include <dt-bindings/zmk/bt.h>
+#include <dt-bindings/zmk/outputs.h>
+#include <dt-bindings/zmk/rgb.h>
+#include <dt-bindings/zmk/pointing.h>
+
+/* Layers */
+#define BASE  0
+#define NAV   1
+#define SYM   2
+#define NUM   3
+#define MOUSE 4
+#define MAGIC 5
+
+#define XXX &none
+#define ___ &trans
+
+#define QUICK_TAP_MS 140
+
+/* Homerow mods (same as ~/p/totem, urob's "timeless" HRMs) */
+
+// Every non-thumb key on each hand, plus all 12 thumb keys.
+#define KEYS_L  0  1  2  3  4 \
+               10 11 12 13 14 15 \
+               22 23 24 25 26 27 \
+               34 35 36 37 38 39 \
+               46 47 48 49 50 51 \
+               64 65 66 67 68
+#define KEYS_R  5  6  7  8  9 \
+               16 17 18 19 20 21 \
+               28 29 30 31 32 33 \
+               40 41 42 43 44 45 \
+               58 59 60 61 62 63 \
+               75 76 77 78 79
+#define THUMBS 52 53 54 55 56 57 69 70 71 72 73 74
+
+// `#binding-cells` has to live in an object-like macro: inside a function-like
+// macro body `#` is the stringify operator.
+#define HOLD_TAP_CORE                                                          \
+    compatible = "zmk,behavior-hold-tap";                                      \
+    #binding-cells = <2>
+
+#define MAKE_HRM(NAME, HOLD, TAP, TRIGGER_POS)                                 \
+    / {                                                                        \
+        behaviors {                                                            \
+            NAME: NAME {                                                       \
+                HOLD_TAP_CORE;                                                 \
+                bindings = <HOLD>, <TAP>;                                      \
+                flavor = "balanced";                                           \
+                tapping-term-ms = <240>;                                       \
+                quick-tap-ms = <QUICK_TAP_MS>;                                 \
+                require-prior-idle-ms = <150>;                                 \
+                hold-trigger-on-release;                                       \
+                hold-trigger-key-positions = <TRIGGER_POS>;                    \
+            };                                                                 \
+        };                                                                     \
+    };
+
+MAKE_HRM(hml, &kp, &kp, KEYS_R THUMBS) // Left-hand HRMs.
+MAKE_HRM(hmr, &kp, &kp, KEYS_L THUMBS) // Right-hand HRMs.
+
+&sk {
+    release-after-ms = <900>;
+    quick-release;
+};
+
+&lt {
+    flavor = "balanced";
+    tapping-term-ms = <200>;
+    quick-tap-ms = <QUICK_TAP_MS>;
+};
+
+/* Mouse keys (MOUSE layer) */
+
+&msc {
+    acceleration-exponent = <0>;          // 0
+    time-to-max-speed-ms = <300>;         // 300
+    delay-ms = <0>;                       // 0
+};
+
+/* Glove80 system behaviors: Magic key (RGB status on tap, MAGIC layer on hold)
+ * and bluetooth profile macros, from the stock MoErgo keymap. */
+
+/ {
+    behaviors {
+        magic: magic_hold_tap {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "tap-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&rgb_ug_status_macro>;
+        };
+    };
+
+    macros {
+        rgb_ug_status_macro: rgb_ug_status_macro {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&rgb_ug RGB_STATUS>;
+        };
+
+        bt_0: bt_profile_macro_0 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 0>;
+        };
+
+        bt_1: bt_profile_macro_1 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 1>;
+        };
+
+        bt_2: bt_profile_macro_2 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 2>;
+        };
+
+        bt_3: bt_profile_macro_3 {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&out OUT_BLE>, <&bt BT_SEL 3>;
+        };
+
+        /* tmux (prefix is Ctrl+A) */
+        tmux_new_window: tmux_new_window {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(A) &kp C>;
+        };
+
+        tmux_prev_window: tmux_prev_window {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(A) &kp H>;
+        };
+
+        tmux_next_window: tmux_next_window {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&kp LC(A) &kp N>;
+        };
+    };
+
+    /* Combos on the right home row: H=40 J=41 K=42 L=43 */
+    combos {
+        compatible = "zmk,combos";
+
+        shortcat {
+            key-positions = <40 41>;
+            bindings = <&kp LA(LG(LS(S)))>;
+        };
+
+        tmux_prev {
+            key-positions = <41 42>;
+            bindings = <&tmux_prev_window>;
+        };
+
+        tmux_next {
+            key-positions = <42 43>;
+            bindings = <&tmux_next_window>;
+        };
+
+        raycast_notes {
+            key-positions = <41 42 43>;
+            bindings = <&kp LS(LA(LC(LG(SPACE))))>;
+        };
+    };
+
+    keymap {
+        compatible = "zmk,keymap";
+
+        /* Row order per layer:
+         *   F-row      (10)
+         *   numbers    (12)
+         *   top        (12)
+         *   home       (12)
+         *   bottom     (18) = 6 + [T1 T2 T3] [T3 T2 T1] + 6
+         *   lowest     (16) = 5 + [T4 T5 T6] [T6 T5 T4] + 5
+         */
+
+        base_layer {
+            bindings = <
+&kp LG(SPACE)  &kp F2       &kp F3       &kp F4        &kp F5                                                                                        &kp F6  &kp F7        &kp F8        &kp F9    &kp F10
+&kp GRAVE      &kp N1       &kp N2       &kp N3        &kp N4        &kp N5                                                                  &kp N6  &kp N7  &kp N8        &kp N9        &kp N0    &kp MINUS
+&kp TAB        &kp Q        &kp W        &kp E         &kp R         &kp T                                                                   &kp Y   &kp U   &kp I         &kp O         &kp P     &kp BSLH
+&kp LSHFT      &hml LGUI A  &hml LALT S  &hml LSHFT D  &hml LCTRL F  &kp G                                                                   &kp H   &hmr LCTRL J  &hmr LSHFT K  &kp L   &hmr LGUI SEMI  &kp SQT
+&kp RGUI       &kp Z        &kp X        &kp C         &kp V         &kp B   &sk RGUI       &kp LCTRL    &kp LALT         &magic MAGIC 0  &kp RCTRL    &kp RSHFT     &kp N   &kp M   &kp COMMA     &kp DOT       &kp FSLH  &kp PG_UP
+&kp LCTRL      &kp HOME     &kp END      &kp LEFT      &kp RIGHT             &lt SYM SPACE  &lt NAV ESC  &lt MOUSE LGUI   &kp LG(GRAVE)   &lt NUM RET  &lt NAV BSPC          &kp UP  &kp DOWN      &kp LBKT      &kp RBKT  &kp PG_DN
+            >;
+        };
+
+        nav_layer {
+            bindings = <
+___  ___  ___  ___  ___                                                                                                    ___  ___  ___  ___  ___
+___  ___  ___            ___           ___            ___                                                                                   ___          ___             ___            ___            ___  ___
+___  ___  &kp LG(LBKT)   &kp LG(RBKT)  &kp LG(LBRC)   &kp LG(RBRC)                                                                          &caps_word   &kp LA(LEFT)    &kp LA(RIGHT)  XXX            XXX  ___
+___  ___  &kp C_VOL_DN   &kp K_MUTE    &kp C_VOL_UP   ___                                                                                   &kp N0       &kp LA(LEFT)    &kp LA(RIGHT)  &kp LS(LG(J))  XXX  ___
+___  ___  ___            &kp C_PP      &kp LG(LEFT)   &kp LG(RIGHT)  ___          ___  ___     ___  ___  ___                                &kp CAPS     &kp LG(LS(N4))  XXX            XXX            ___  ___
+___  ___  ___            ___           ___                           &kp LS(RET)  ___  ___     ___  ___  ___                                             ___             ___            ___            ___  ___
+            >;
+        };
+
+        sym_layer {
+            bindings = <
+___  ___  ___  ___  ___                                                                                                    ___  ___  ___  ___  ___
+___  ___        ___        ___       ___       ___                                                                              ___        ___        ___        ___        ___        ___
+___  &kp GRAVE  &kp MINUS  &kp LBRC  &kp RBRC  &kp EXCL                                                                         &kp STAR   &kp DLLR   &kp PRCNT  &kp SQT    &kp DQT    ___
+___  &kp TILDE  &kp PLUS   &kp LPAR  &kp RPAR  &kp AT                                                                           &kp LEFT   &kp DOWN   &kp UP     &kp RIGHT  &kp SEMI   ___
+___  &kp PIPE   &kp UNDER  &kp LBKT  &kp RBKT  &kp HASH  ___  ___  ___     ___  ___  ___                                        &kp COLON  &kp EQUAL  &kp AMPS   &kp BSLH   &kp LCTRL  ___
+___  ___        ___        ___       ___                 ___  ___  ___     ___  XXX  &kp LA(BSPC)                                           ___        ___        ___        ___        ___
+            >;
+        };
+
+        num_layer {
+            bindings = <
+___  ___  ___  ___  ___                                                                                                    ___  ___  ___  ___  ___
+___  ___        ___        ___       ___       ___                                                                              ___  ___  ___  ___  ___  &bootloader
+___  &kp N1     &kp N2     &kp N3    &kp N4    &kp N5                                                                           ___  ___  ___  ___  ___  ___
+___  &kp N6     &kp N7     &kp N8    &kp N9    &kp N0                                                                           ___  ___  ___  ___  ___  ___
+___  &kp PLUS   &kp MINUS  &kp STAR  &kp FSLH  &kp COLON  ___  ___  ___     ___  ___  ___                                       ___  ___  ___  ___  ___  ___
+___  ___        ___        ___       ___                  ___  ___  ___     ___  ___  ___                                            ___  ___  ___  ___  ___
+            >;
+        };
+
+        /* Hold left T6 (LGUI thumb). Scroll with D/F, move with HJKL, click with the thumbs. */
+        mouse_layer {
+            bindings = <
+___  ___  ___  ___  ___                                                                                                    ___  ___  ___  ___  ___
+&bootloader  ___  ___  ___           ___             ___                                                                        ___             ___             ___           ___              ___  ___
+___          ___  ___  ___           ___             ___                                                                        ___             ___             ___           ___              ___  ___
+___          ___  ___  &msc SCRL_UP  &msc SCRL_DOWN  ___                                                                        &mmv MOVE_LEFT  &mmv MOVE_DOWN  &mmv MOVE_UP  &mmv MOVE_RIGHT  ___  ___
+___          ___  ___  ___           ___             ___  ___        ___        ___     ___        ___        ___               ___             ___             ___           ___              ___  ___
+___          ___  ___  ___           ___                  &mkp LCLK  &mkp RCLK  ___     &mkp MCLK  &mkp RCLK  &mkp LCLK                        ___             ___           ___              ___  ___
+            >;
+        };
+
+        /* Stock Glove80 Magic layer: bluetooth, RGB, bootloader, reset. */
+        magic_layer {
+            bindings = <
+&bt BT_CLR   XXX              XXX              XXX              XXX                                                                                            XXX  XXX  XXX  XXX  &bt BT_CLR_ALL
+XXX          XXX              XXX              XXX              XXX              XXX                                                                      XXX  XXX  XXX  XXX  XXX  XXX
+XXX          &rgb_ug RGB_SPI  &rgb_ug RGB_SAI  &rgb_ug RGB_HUI  &rgb_ug RGB_BRI  &rgb_ug RGB_TOG                                                          XXX  XXX  XXX  XXX  XXX  XXX
+&bootloader  &rgb_ug RGB_SPD  &rgb_ug RGB_SAD  &rgb_ug RGB_HUD  &rgb_ug RGB_BRD  &rgb_ug RGB_EFF                                                          XXX  XXX  XXX  XXX  XXX  &bootloader
+&sys_reset   XXX              XXX              XXX              XXX              XXX              &bt_2  &bt_3  XXX             XXX  XXX  XXX              XXX  XXX  XXX  XXX  XXX  &sys_reset
+XXX          XXX              XXX              XXX              XXX                               &bt_0  &bt_1  &out OUT_USB    XXX  XXX  XXX                   XXX  XXX  XXX  XXX  XXX
+            >;
+        };
+    };
+};

@@ -1,0 +1,6 @@
+# local build artefacts (see build.sh)
+/src/
+/combined
+/result*
+*.uf2
+.DS_Store
