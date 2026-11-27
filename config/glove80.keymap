@@ -212,7 +212,7 @@ MAKE_HRM(hmr, &kp, &kp, KEYS_L THUMBS) // Right-hand HRMs.
 &kp TAB        &kp Q        &kp W        &kp E         &kp R         &kp T                                                                           &kp Y   &kp U        &kp I         &kp O         &kp P     &kp BSLH
 &kp ESC        &hml LGUI A  &hml LALT S  &hml LSHFT D  &hml LCTRL F  &kp G                                                                           &kp H   &hmr LCTRL J &hmr LSHFT K  &hmr LALT L   &hmr LGUI SEMI  &kp SQT
 &kp LSHFT      &kp Z        &kp X        &kp C         &kp V         &kp B   &none  &none         &none            &magic MAGIC 0  &none     &none   &kp N   &kp M        &kp COMMA     &kp DOT       &kp FSLH  &kp PG_UP
-&kp RGUI       &kp HOME     &kp END      &kp LEFT      &kp RIGHT     &lt SYM SPACE  &kp LSHFT &lt MOUSE LGUI   &kp RGUI  &lt NUM RET &lt NAV BSPC    &kp UP  &kp DOWN     &kp LBKT      &kp RBKT  &kp EQUAL
+&kp RGUI       &kp HOME     &kp END      &kp LEFT      &kp RIGHT     &lt SYM SPACE  &kp LSHFT &lt MOUSE LGUI   &kp LALT  &lt NUM RET &lt NAV BSPC    &kp UP  &kp DOWN     &kp LBKT      &kp RBKT  &kp EQUAL
             >;
         };
 
