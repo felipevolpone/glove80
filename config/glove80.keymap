@@ -175,14 +175,16 @@ MAKE_HRM(hmr, &kp, &kp, KEYS_L THUMBS) // Right-hand HRMs.
             bindings = <&kp LA(LG(LS(S)))>;
         };
 
-        tmux_prev {
+        // J + K -> Cmd+Shift+[ (previous tab on macOS)
+        prev_tab {
             key-positions = <41 42>;
-            bindings = <&tmux_prev_window>;
+            bindings = <&kp LG(LS(LBKT))>;
         };
 
-        tmux_next {
+        // K + L -> Cmd+Shift+] (next tab on macOS)
+        next_tab {
             key-positions = <42 43>;
-            bindings = <&tmux_next_window>;
+            bindings = <&kp LG(LS(RBKT))>;
         };
 
         raycast_notes {
